@@ -1,9 +1,9 @@
 import { Component } from 'react';
 import shortid from 'shortid';
 
-import Section from './Section';
+import Section from './Section/Section';
 import Form from './Form/Form';
-import Contacts from './Contacts';
+import Contacts from './Contacts/Contacts';
 import Filter from './Filter/Filter';
 
 class App extends Component {
@@ -14,8 +14,20 @@ class App extends Component {
       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
-    filter: [],
+    filter: '',
   };
+
+  componentDidMount() {
+    const parsedContacts = JSON.parse(localStorage.getItem('my-contacts'));
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+
+  componentDidUpdate() {
+    const { contacts } = this.state;
+    localStorage.setItem('my-contacts', JSON.stringify(contacts));
+  }
 
   addContact = ({ name, number }) => {
     console.log(name, number);
@@ -63,14 +75,8 @@ class App extends Component {
     const { filter, contacts } = this.state;
 
     const filteredContacts = contacts.filter(contact =>
-      contact.name.includes(filter)
+      contact.name.toLowerCase().includes(filter.toLowerCase())
     );
-
-    // НЕ ПРАЦЮЄ через toLowerCase <---------------------------------
-    // ГОРИТЬ КОНСОЛЬ
-    // const filteredContacts = contacts.filter(contact =>
-    //   contact.name.toLowerCase().includes(filter.toLowerCase())
-    // );
 
     return (
       <>
